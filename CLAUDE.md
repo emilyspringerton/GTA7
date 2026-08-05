@@ -39,20 +39,34 @@ loaded, same verification discipline as every other plugin on this server.
 
 ## Status
 
-**VS0 live** as of 2026-08-05: Field Office claim + Contest Window + Flow ticking, deployed and
-confirmed enabling cleanly in `server.log`. Right-click a Beacon in the live world to claim it as
-a Field Office; right-click someone else's to open a 60s Contest Window (flips to the challenger
-if they're within 15 blocks when it resolves); `/flow` shows your Flow balance and how many
-Field Offices you hold. Claim/flip events post as IDUNA Apples via the `emily` CLI (async, off
-the main server thread).
+**VS0 + VS1 + IDUNA/WOTAN integration live** as of 2026-08-05.
 
-**Not yet verified with a real connected client** — the plugin compiles, deploys, and enables
-without error, but the actual claim/Contest Window gameplay hasn't been tested by a real player
-in the live world yet (this session has no way to connect a Minecraft client itself). Founder
-should try it live and report back before VS0 is considered fully proven, not just "built."
+- **VS0**: right-click a Beacon to claim it as a Field Office; right-click someone else's to open
+  a 60s Contest Window (flips to the challenger if within 15 blocks when it resolves); `/flow`
+  shows Flow balance + Field Offices held.
+- **VS1**: per-FO Watcher alertness (claims +15, Contest Windows +25, flips +15, nearby PvP +10;
+  decays -5/30s). At alertness >=65, a 2-mob "Enforcement" squad spawns and targets the FO's owner
+  if they're online and nearby (real vanilla mob AI via `Mob#setTarget`, no custom Goal needed).
+- **IDUNA integration**: a real M2M agent, `GTA7-SERVER` (IDUNA migration
+  `202608050002_gta7_server_agent.sql`, `apples.write` permission), authenticates directly over
+  HTTP (`IdunaClient`) — replaced VS0's original shortcut of shelling out to the `emily` CLI.
+  Claim/flip events post as real Apples.
+- **WOTAN integration**: every player who joins gets registered into IDUNA's real, generic player
+  registry (`provider=minecraft`, `provider_sub`=Bukkit UUID) — the same identity system
+  REDGARDEN-BOTS already uses. A GTA7 player and a WOTAN/SHANKPIT player are the same IDUNA
+  `player_id` if they're the same person. Flow/Field-Office numbers themselves stay in GTA7's own
+  YAML for now — WOTAN's kills/deaths/sessions schema is SHANKPIT-shaped and wasn't repurposed to
+  mean something else; a shared stats surface is future work, not done here.
 
-VS1+ (Watchers/Enforcement, K9/Party Stores, Media/factions, Rogue Swarms/Custody Lock) not
-started — see `docs/NORTHSTAR.md`.
+**Auth/identity plumbing verified two ways**: direct `curl` end-to-end (auth → apple post →
+player register, all real, before any Java was written against it) and a clean plugin boot with
+no exceptions on the live server. **Actual gameplay** (does alertness really rise/spawn/despawn
+right, does a Beacon claim really work, does a joining player really get linked) still hasn't been
+exercised by a real connected client — this session has no way to connect one. Founder should
+playtest and report back.
+
+VS2+ (K9/Party Stores, Media/factions, Rogue Swarms/Custody Lock) not started — see
+`docs/NORTHSTAR.md`.
 
 ## Commit Protocol (standing instruction)
 
