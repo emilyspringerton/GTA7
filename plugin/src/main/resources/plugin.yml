@@ -1,0 +1,4 @@
+name: GTA7
+version: 0.1.0
+main: industrial.einhorn.gta7.GTA7Plugin
+api-version: '1.21'
