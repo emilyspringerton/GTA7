@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 // VS0: Field Office claim/Flow/Contest Window loop.
 // VS1: Watcher alertness + Enforcement spawns.
+// VS2: K9 Doctrine (Contest Window defense) + Party Stores.
 // IDUNA/WOTAN integration: real Apple receipts + shared player identity.
 // See docs/NORTHSTAR.md.
 public final class GTA7Plugin extends JavaPlugin {
@@ -19,11 +20,14 @@ public final class GTA7Plugin extends JavaPlugin {
     private static final Path IDUNA_SECRETS_FILE = Path.of("/home/fatbaby/IDUNA/var/agent-secrets.env");
 
     private FieldOfficeManager offices;
+    private PartyStoreManager partyStores;
 
     @Override
     public void onEnable() {
         offices = new FieldOfficeManager(this);
         offices.load();
+        partyStores = new PartyStoreManager(this);
+        partyStores.load();
 
         IdunaClient iduna = new IdunaClient(this, IDUNA_BASE_URL, IDUNA_SECRETS_FILE);
         if (!iduna.isConfigured()) {
@@ -35,13 +39,18 @@ public final class GTA7Plugin extends JavaPlugin {
         ReceiptPoster receipts = new ReceiptPoster(this, iduna);
         WatcherManager watchers = new WatcherManager();
         EnforcementManager enforcement = new EnforcementManager(this, offices, watchers);
+        K9Manager k9 = new K9Manager();
 
         getServer().getPluginManager().registerEvents(
-                new FieldOfficeListener(this, offices, contests, receipts, watchers), this);
+                new FieldOfficeListener(this, offices, contests, receipts, watchers, k9), this);
         getServer().getPluginManager().registerEvents(
                 new WatcherListener(offices, watchers), this);
         getServer().getPluginManager().registerEvents(
                 new PlayerIdentityListener(this, iduna), this);
+        getServer().getPluginManager().registerEvents(
+                new K9Listener(offices, k9), this);
+        getServer().getPluginManager().registerEvents(
+                new PartyStoreListener(partyStores), this);
         getCommand("flow").setExecutor(new FlowCommand(offices));
 
         getServer().getScheduler().runTaskTimer(this, () -> offices.tickFlow(FLOW_PER_TICK),
@@ -51,12 +60,13 @@ public final class GTA7Plugin extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, enforcement::tick,
                 ENFORCEMENT_TICK_PERIOD, ENFORCEMENT_TICK_PERIOD);
 
-        getLogger().info("GTA7 enabled -- VS0 Field Office loop + VS1 Watchers/Enforcement + IDUNA integration live.");
+        getLogger().info("GTA7 enabled -- VS0/VS1/VS2 + IDUNA integration live.");
     }
 
     @Override
     public void onDisable() {
         if (offices != null) offices.save();
+        if (partyStores != null) partyStores.save();
         getLogger().info("GTA7 disabled.");
     }
 }
