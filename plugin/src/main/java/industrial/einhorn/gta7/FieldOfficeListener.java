@@ -25,12 +25,15 @@ final class FieldOfficeListener implements Listener {
     private final FieldOfficeManager offices;
     private final ContestManager contests;
     private final ReceiptPoster receipts;
+    private final WatcherManager watchers;
 
-    FieldOfficeListener(JavaPlugin plugin, FieldOfficeManager offices, ContestManager contests, ReceiptPoster receipts) {
+    FieldOfficeListener(JavaPlugin plugin, FieldOfficeManager offices, ContestManager contests,
+                         ReceiptPoster receipts, WatcherManager watchers) {
         this.plugin = plugin;
         this.offices = offices;
         this.contests = contests;
         this.receipts = receipts;
+        this.watchers = watchers;
     }
 
     @EventHandler
@@ -60,6 +63,7 @@ final class FieldOfficeListener implements Listener {
 
     private void claim(Player player, Location loc) {
         offices.claim(loc, player.getUniqueId());
+        watchers.bump(loc, 15);
         Bukkit.broadcastMessage("§6[GTA7] §f" + player.getName() + " claimed a Field Office at "
                 + fmt(loc) + ".");
         receipts.post("Field Office claimed at " + fmt(loc),
@@ -68,6 +72,7 @@ final class FieldOfficeListener implements Listener {
 
     private void openContest(Player challenger, Location loc, UUID ownerId) {
         contests.start(loc, challenger.getUniqueId());
+        watchers.bump(loc, 25);
         String ownerName = Bukkit.getOfflinePlayer(ownerId).getName();
         Bukkit.broadcastMessage("§c[GTA7] §fContest Window opened at " + fmt(loc) + " -- "
                 + challenger.getName() + " vs " + ownerName + ". 60 seconds.");
@@ -85,6 +90,7 @@ final class FieldOfficeListener implements Listener {
 
         if (flips) {
             offices.flip(loc, challengerId);
+            watchers.bump(loc, 15);
             Bukkit.broadcastMessage("§a[GTA7] §fField Office at " + fmt(loc) + " flipped to "
                     + challenger.getName() + "!");
             receipts.post("Field Office flipped at " + fmt(loc),

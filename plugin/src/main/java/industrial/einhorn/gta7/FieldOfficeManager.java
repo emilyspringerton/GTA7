@@ -1,6 +1,8 @@
 package industrial.einhorn.gta7;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +30,23 @@ final class FieldOfficeManager {
 
     static String keyOf(Location loc) {
         return loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+    }
+
+    // Inverse of keyOf -- lets EnforcementManager go from a tracked key back
+    // to a real Location to spawn mobs at. Returns null if the world isn't
+    // loaded (shouldn't happen for this server's single world, but cheap to
+    // guard against rather than assume).
+    static Location locationFromKey(String key) {
+        String[] parts = key.split(":");
+        World world = Bukkit.getWorld(parts[0]);
+        if (world == null) return null;
+        return new Location(world, Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+    }
+
+    // Real Location + owner pairs for every known Field Office, for systems
+    // (EnforcementManager) that need to act on the world, not just the map.
+    Map<String, FieldOffice> all() {
+        return Map.copyOf(offices);
     }
 
     void load() {
