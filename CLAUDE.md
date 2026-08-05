@@ -39,7 +39,8 @@ loaded, same verification discipline as every other plugin on this server.
 
 ## Status
 
-**VS0 + VS1 + VS2 + IDUNA/WOTAN integration live** as of 2026-08-05.
+**VS0 + VS1 + VS2 + VS3 + IDUNA/WOTAN integration live** as of 2026-08-05. See `README.md` for
+the player-facing how-to-play guide.
 
 - **VS0**: right-click a Beacon to claim it as a Field Office; right-click someone else's to open
   a 60s Contest Window (flips to the challenger if within 15 blocks when it resolves); `/flow`
@@ -71,7 +72,12 @@ playtest and report back.
   make it a Party Store (real vanilla trading builds goodwill; closes at night or force-closes for
   5 minutes after nearby PvP).
 
-VS3+ (Media/factions, Rogue Swarms/Custody Lock) not started — see `docs/NORTHSTAR.md`.
+- **VS3**: `/gta7tv` places a real `TextDisplay` entity showing a rolling feed of city activity
+  (claims, flips, contests, Enforcement, Party Store closures). `/faction join
+  <FREQUENCY|BLOC|PROCUREMENT>` joins one of the three player-alignable factions (real Bukkit
+  Team for nametag color); claims/flips earn faction reputation.
+
+VS4+ (Rogue Swarms, Custody Lock) not started — see `docs/NORTHSTAR.md`.
 
 ## Commit Protocol (standing instruction)
 

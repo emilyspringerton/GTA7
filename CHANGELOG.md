@@ -8,3 +8,5 @@
 - feat: real IDUNA integration -- new GTA7-SERVER agent, direct HTTP auth+Apple-posting (IdunaClient), replacing VS0's CLI-shell-out. WOTAN integration -- every joining player registered into IDUNA's real player registry (provider=minecraft), same identity system REDGARDEN-BOTS uses. Verified end-to-end via curl before wiring into Java.
 - feat: VS2 -- K9 units (sneak+right-click your own tamed Wolf near a held FO) extend and defend Contest Windows with diminishing returns. Party Stores (sneak+right-click a Villager) with real day/night hours + PvP-triggered early closing + trade-based goodwill memory.
 - confirmed live: a real player's join triggered a real IDUNA player_id link (WOTAN integration working end-to-end with an actual connected client, not just curl tests).
+- feat: VS3 -- /gta7tv places a real TextDisplay broadcast screen showing recent city activity (claims/flips/contests/Enforcement/store closures). /faction join <FREQUENCY|BLOC|PROCUREMENT> -- real Bukkit Team nametag color + reputation from claims/flips.
+- docs: added README.md with connection instructions + full how-to-play guide for every system shipped so far.
