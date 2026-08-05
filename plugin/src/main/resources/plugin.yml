@@ -2,3 +2,7 @@ name: GTA7
 version: 0.1.0
 main: industrial.einhorn.gta7.GTA7Plugin
 api-version: '1.21'
+commands:
+  flow:
+    description: Check your Flow balance and how many Field Offices you hold.
+    usage: /flow

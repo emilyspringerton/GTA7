@@ -39,8 +39,20 @@ loaded, same verification discipline as every other plugin on this server.
 
 ## Status
 
-Scoping pass only as of 2026-08-05 (`docs/NORTHSTAR.md`, VS0 milestone defined). Plugin directory
-is a minimal loadable skeleton — no Field Office/Watcher/K9/Media systems implemented yet.
+**VS0 live** as of 2026-08-05: Field Office claim + Contest Window + Flow ticking, deployed and
+confirmed enabling cleanly in `server.log`. Right-click a Beacon in the live world to claim it as
+a Field Office; right-click someone else's to open a 60s Contest Window (flips to the challenger
+if they're within 15 blocks when it resolves); `/flow` shows your Flow balance and how many
+Field Offices you hold. Claim/flip events post as IDUNA Apples via the `emily` CLI (async, off
+the main server thread).
+
+**Not yet verified with a real connected client** — the plugin compiles, deploys, and enables
+without error, but the actual claim/Contest Window gameplay hasn't been tested by a real player
+in the live world yet (this session has no way to connect a Minecraft client itself). Founder
+should try it live and report back before VS0 is considered fully proven, not just "built."
+
+VS1+ (Watchers/Enforcement, K9/Party Stores, Media/factions, Rogue Swarms/Custody Lock) not
+started — see `docs/NORTHSTAR.md`.
 
 ## Commit Protocol (standing instruction)
 
