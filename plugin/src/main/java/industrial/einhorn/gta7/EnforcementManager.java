@@ -31,12 +31,14 @@ final class EnforcementManager {
     private final JavaPlugin plugin;
     private final FieldOfficeManager offices;
     private final WatcherManager watchers;
+    private final MediaManager media;
     private final Map<String, List<UUID>> activeSquads = new HashMap<>();
 
-    EnforcementManager(JavaPlugin plugin, FieldOfficeManager offices, WatcherManager watchers) {
+    EnforcementManager(JavaPlugin plugin, FieldOfficeManager offices, WatcherManager watchers, MediaManager media) {
         this.plugin = plugin;
         this.offices = offices;
         this.watchers = watchers;
+        this.media = media;
     }
 
     void tick() {
@@ -87,8 +89,10 @@ final class EnforcementManager {
         }
 
         activeSquads.put(key, squad);
-        Bukkit.broadcastMessage("§c[GTA7] §fEnforcement is moving on a Field Office at "
-                + fo.getBlockX() + "," + fo.getBlockY() + "," + fo.getBlockZ() + ".");
+        String line = "Enforcement is moving on a Field Office at "
+                + fo.getBlockX() + "," + fo.getBlockY() + "," + fo.getBlockZ() + ".";
+        Bukkit.broadcastMessage("§c[GTA7] §f" + line);
+        media.broadcast(line);
         plugin.getLogger().info("Enforcement spawned at " + key + " (alertness " + watchers.get(fo) + ")");
     }
 }

@@ -6,3 +6,9 @@ commands:
   flow:
     description: Check your Flow balance and how many Field Offices you hold.
     usage: /flow
+  faction:
+    description: View or join a GTA7 faction.
+    usage: /faction [join <FREQUENCY|BLOC|PROCUREMENT>]
+  gta7tv:
+    description: Place a broadcast TV showing recent GTA7 city activity.
+    usage: /gta7tv

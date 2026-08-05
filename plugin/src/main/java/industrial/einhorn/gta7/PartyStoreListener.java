@@ -25,9 +25,11 @@ final class PartyStoreListener implements Listener {
     private static final long TROUBLE_CLOSE_MILLIS = 5L * 60 * 1000; // 5 minutes
 
     private final PartyStoreManager stores;
+    private final MediaManager media;
 
-    PartyStoreListener(PartyStoreManager stores) {
+    PartyStoreListener(PartyStoreManager stores, MediaManager media) {
         this.stores = stores;
+        this.media = media;
     }
 
     @EventHandler
@@ -80,6 +82,7 @@ final class PartyStoreListener implements Listener {
                 stores.recordTrouble(villager.getUniqueId(), TROUBLE_CLOSE_MILLIS);
                 if (wasOpen) {
                     Bukkit.broadcastMessage("§7[GTA7] §fA Party Store closed early -- trouble nearby.");
+                    media.broadcast("A Party Store closed early -- trouble nearby.");
                 }
             }
         }

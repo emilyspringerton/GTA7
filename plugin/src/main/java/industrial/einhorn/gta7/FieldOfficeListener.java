@@ -26,21 +26,29 @@ final class FieldOfficeListener implements Listener {
     private static final long CONTEST_TICKS_PER_DEFENSE = 20L * 10; // +10s per defense-score point
     private static final double CONTEST_RADIUS = 15.0;
 
+    private static final int REP_PER_CLAIM = 5;
+    private static final int REP_PER_FLIP = 10;
+
     private final JavaPlugin plugin;
     private final FieldOfficeManager offices;
     private final ContestManager contests;
     private final ReceiptPoster receipts;
     private final WatcherManager watchers;
     private final K9Manager k9;
+    private final MediaManager media;
+    private final FactionManager factions;
 
     FieldOfficeListener(JavaPlugin plugin, FieldOfficeManager offices, ContestManager contests,
-                         ReceiptPoster receipts, WatcherManager watchers, K9Manager k9) {
+                         ReceiptPoster receipts, WatcherManager watchers, K9Manager k9,
+                         MediaManager media, FactionManager factions) {
         this.plugin = plugin;
         this.offices = offices;
         this.contests = contests;
         this.receipts = receipts;
         this.watchers = watchers;
         this.k9 = k9;
+        this.media = media;
+        this.factions = factions;
     }
 
     @EventHandler
@@ -71,8 +79,10 @@ final class FieldOfficeListener implements Listener {
     private void claim(Player player, Location loc) {
         offices.claim(loc, player.getUniqueId());
         watchers.bump(loc, 15);
-        Bukkit.broadcastMessage("§6[GTA7] §f" + player.getName() + " claimed a Field Office at "
-                + fmt(loc) + ".");
+        factions.addRep(player.getUniqueId(), REP_PER_CLAIM);
+        String line = player.getName() + " claimed a Field Office at " + fmt(loc) + ".";
+        Bukkit.broadcastMessage("§6[GTA7] §f" + line);
+        media.broadcast(line);
         receipts.post("Field Office claimed at " + fmt(loc),
                 player.getName() + " (" + player.getUniqueId() + ") claimed an unheld Field Office.");
     }
@@ -92,8 +102,10 @@ final class FieldOfficeListener implements Listener {
 
         String ownerName = Bukkit.getOfflinePlayer(ownerId).getName();
         String k9Note = defense > 0 ? " (K9 units engaged, +" + (ticks - CONTEST_TICKS_BASE) / 20 + "s)" : "";
-        Bukkit.broadcastMessage("§c[GTA7] §fContest Window opened at " + fmt(loc) + " -- "
-                + challenger.getName() + " vs " + ownerName + ". " + (ticks / 20) + " seconds." + k9Note);
+        String line = "Contest Window opened at " + fmt(loc) + " -- " + challenger.getName()
+                + " vs " + ownerName + "." + k9Note;
+        Bukkit.broadcastMessage("§c[GTA7] §f" + line + " " + (ticks / 20) + " seconds.");
+        media.broadcast(line);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> resolveContest(loc, challenger.getUniqueId(), ownerId), ticks);
     }
@@ -109,15 +121,18 @@ final class FieldOfficeListener implements Listener {
         if (flips) {
             offices.flip(loc, challengerId);
             watchers.bump(loc, 15);
-            Bukkit.broadcastMessage("§a[GTA7] §fField Office at " + fmt(loc) + " flipped to "
-                    + challenger.getName() + "!");
+            factions.addRep(challengerId, REP_PER_FLIP);
+            String line = challenger.getName() + " flipped a Field Office at " + fmt(loc) + "!";
+            Bukkit.broadcastMessage("§a[GTA7] §f" + line);
+            media.broadcast(line);
             receipts.post("Field Office flipped at " + fmt(loc),
                     challenger.getName() + " (" + challengerId + ") won a Contest Window against "
                             + Bukkit.getOfflinePlayer(ownerId).getName() + ".");
         } else {
             String ownerName = Bukkit.getOfflinePlayer(ownerId).getName();
-            Bukkit.broadcastMessage("§7[GTA7] §fContest Window at " + fmt(loc) + " failed -- "
-                    + ownerName + " holds.");
+            String line = "Contest Window at " + fmt(loc) + " failed -- " + ownerName + " holds.";
+            Bukkit.broadcastMessage("§7[GTA7] §f" + line);
+            media.broadcast(line);
         }
     }
 
