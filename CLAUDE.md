@@ -39,7 +39,7 @@ loaded, same verification discipline as every other plugin on this server.
 
 ## Status
 
-**VS0 + VS1 + IDUNA/WOTAN integration live** as of 2026-08-05.
+**VS0 + VS1 + VS2 + IDUNA/WOTAN integration live** as of 2026-08-05.
 
 - **VS0**: right-click a Beacon to claim it as a Field Office; right-click someone else's to open
   a 60s Contest Window (flips to the challenger if within 15 blocks when it resolves); `/flow`
@@ -65,8 +65,13 @@ right, does a Beacon claim really work, does a joining player really get linked)
 exercised by a real connected client — this session has no way to connect one. Founder should
 playtest and report back.
 
-VS2+ (K9/Party Stores, Media/factions, Rogue Swarms/Custody Lock) not started — see
-`docs/NORTHSTAR.md`.
+- **VS2**: sneak + right-click your own tamed Wolf near a Field Office you hold to assign it as a
+  K9 unit — diminishing-returns defense score extends a Contest Window's duration and sets live
+  K9s to target the challenger for its length. Sneak + right-click an un-designated Villager to
+  make it a Party Store (real vanilla trading builds goodwill; closes at night or force-closes for
+  5 minutes after nearby PvP).
+
+VS3+ (Media/factions, Rogue Swarms/Custody Lock) not started — see `docs/NORTHSTAR.md`.
 
 ## Commit Protocol (standing instruction)
 
