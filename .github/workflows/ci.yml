@@ -21,11 +21,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      # JDK 25, not 21: pom.xml's maven.compiler.source/target=21 only pins
+      # this plugin's own OUTPUT bytecode version. paper-api
+      # 26.2.build.97-stable's own class files are themselves compiled for
+      # a newer JDK than 21 can read -- confirmed by reproducing this
+      # exact failure locally ("bad class file" on every org.bukkit.*
+      # class) with a real JDK 21, and confirming BUILD SUCCESS with JDK
+      # 25. Matches EINHORN_SURVIVAL/jdk25, the JDK this repo's own
+      # CLAUDE.md already documents using for local builds/deploys.
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: "25"
           cache: maven
 
       # No test suite exists yet in plugin/src (this is a Paper plugin --
