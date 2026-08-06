@@ -17,7 +17,9 @@ import java.util.UUID;
 // yet -- IDUNA only sees claim/flip events, not this raw state.
 final class FieldOfficeManager {
 
-    record FieldOffice(UUID owner, long flow) {}
+    // scarred = true after a failed Rogue Swarm containment (VS4) -- halves
+    // future Flow generation as a lasting consequence, not just cosmetic.
+    record FieldOffice(UUID owner, long flow, boolean scarred) {}
 
     private final JavaPlugin plugin;
     private final File file;
@@ -55,7 +57,8 @@ final class FieldOfficeManager {
         for (String key : yaml.getKeys(false)) {
             UUID owner = UUID.fromString(yaml.getString(key + ".owner"));
             long flow = yaml.getLong(key + ".flow");
-            offices.put(key, new FieldOffice(owner, flow));
+            boolean scarred = yaml.getBoolean(key + ".scarred", false);
+            offices.put(key, new FieldOffice(owner, flow, scarred));
         }
         plugin.getLogger().info("Loaded " + offices.size() + " Field Office(s).");
     }
@@ -65,6 +68,7 @@ final class FieldOfficeManager {
         for (Map.Entry<String, FieldOffice> e : offices.entrySet()) {
             yaml.set(e.getKey() + ".owner", e.getValue().owner().toString());
             yaml.set(e.getKey() + ".flow", e.getValue().flow());
+            yaml.set(e.getKey() + ".scarred", e.getValue().scarred());
         }
         try {
             if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
@@ -79,12 +83,13 @@ final class FieldOfficeManager {
     }
 
     void claim(Location loc, UUID owner) {
-        offices.put(keyOf(loc), new FieldOffice(owner, 0));
+        offices.put(keyOf(loc), new FieldOffice(owner, 0, false));
         save();
     }
 
     void flip(Location loc, UUID newOwner) {
-        offices.put(keyOf(loc), new FieldOffice(newOwner, 0));
+        boolean wasScarred = offices.containsKey(keyOf(loc)) && offices.get(keyOf(loc)).scarred();
+        offices.put(keyOf(loc), new FieldOffice(newOwner, 0, wasScarred));
         save();
     }
 
@@ -92,7 +97,8 @@ final class FieldOfficeManager {
         boolean changed = false;
         for (Map.Entry<String, FieldOffice> e : offices.entrySet()) {
             FieldOffice fo = e.getValue();
-            e.setValue(new FieldOffice(fo.owner(), fo.flow() + amount));
+            long gain = fo.scarred() ? amount / 2 : amount;
+            e.setValue(new FieldOffice(fo.owner(), fo.flow() + gain, fo.scarred()));
             changed = true;
         }
         if (changed) save();
@@ -112,5 +118,37 @@ final class FieldOfficeManager {
             if (fo.owner().equals(player)) count++;
         }
         return count;
+    }
+
+    // VS4: a Field Office that fails Rogue Swarm containment loses its
+    // owner (reverts to unclaimed, must be reclaimed like new) and is
+    // marked scarred -- halved Flow generation persists across the next
+    // claim, per flip()'s own scarred-carries-over behavior above.
+    void scar(String foKey) {
+        FieldOffice existing = offices.get(foKey);
+        if (existing == null) return;
+        offices.remove(foKey);
+        // Re-inserted as scarred-but-unclaimed via a sentinel: absence from
+        // the map means "never claimed" everywhere else in this codebase,
+        // so scarred-but-unclaimed needs its own small side table instead
+        // of overloading FieldOffice's owner field with a null.
+        scarredUnclaimed.add(foKey);
+        save();
+    }
+
+    private final java.util.Set<String> scarredUnclaimed = new java.util.HashSet<>();
+
+    boolean isScarredUnclaimed(String foKey) {
+        return scarredUnclaimed.contains(foKey);
+    }
+
+    // Claim path used after a scar wipes ownership -- same as claim() but
+    // preserves the scarred flag instead of resetting it, and clears the
+    // unclaimed-scar bookkeeping.
+    void claimScarred(Location loc, UUID owner) {
+        String key = keyOf(loc);
+        scarredUnclaimed.remove(key);
+        offices.put(key, new FieldOffice(owner, 0, true));
+        save();
     }
 }

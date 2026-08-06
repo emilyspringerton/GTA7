@@ -8,6 +8,7 @@ import java.nio.file.Path;
 // VS1: Watcher alertness + Enforcement spawns.
 // VS2: K9 Doctrine (Contest Window defense) + Party Stores.
 // VS3: Media broadcast TVs + Factions.
+// VS4: Rogue Swarms (containment event, district scar) + Custody Lock.
 // IDUNA/WOTAN integration: real Apple receipts + shared player identity.
 // See docs/NORTHSTAR.md.
 public final class GTA7Plugin extends JavaPlugin {
@@ -17,12 +18,15 @@ public final class GTA7Plugin extends JavaPlugin {
     private static final long WATCHER_DECAY_PERIOD = 20L * 30;  // every 30s
     private static final int WATCHER_DECAY_AMOUNT = 5;
     private static final long ENFORCEMENT_TICK_PERIOD = 20L * 20; // every 20s
+    private static final long ROGUE_SWARM_TICK_PERIOD = 20L * 15; // every 15s
+    private static final long CUSTODY_TICK_PERIOD = 20L * 5;      // every 5s
     private static final String IDUNA_BASE_URL = "http://localhost:8080";
     private static final Path IDUNA_SECRETS_FILE = Path.of("/home/fatbaby/IDUNA/var/agent-secrets.env");
 
     private FieldOfficeManager offices;
     private PartyStoreManager partyStores;
     private FactionManager factions;
+    private CustodyManager custody;
 
     @Override
     public void onEnable() {
@@ -32,6 +36,8 @@ public final class GTA7Plugin extends JavaPlugin {
         partyStores.load();
         factions = new FactionManager(this);
         factions.load();
+        custody = new CustodyManager(this);
+        custody.load();
 
         IdunaClient iduna = new IdunaClient(this, IDUNA_BASE_URL, IDUNA_SECRETS_FILE);
         if (!iduna.isConfigured()) {
@@ -45,6 +51,7 @@ public final class GTA7Plugin extends JavaPlugin {
         MediaManager media = new MediaManager(this);
         EnforcementManager enforcement = new EnforcementManager(this, offices, watchers, media);
         K9Manager k9 = new K9Manager();
+        RogueSwarmManager rogueSwarms = new RogueSwarmManager(this, offices, watchers, media, factions);
 
         getServer().getPluginManager().registerEvents(
                 new FieldOfficeListener(this, offices, contests, receipts, watchers, k9, media, factions), this);
@@ -56,9 +63,14 @@ public final class GTA7Plugin extends JavaPlugin {
                 new K9Listener(offices, k9), this);
         getServer().getPluginManager().registerEvents(
                 new PartyStoreListener(partyStores, media), this);
+        getServer().getPluginManager().registerEvents(
+                new RogueSwarmListener(rogueSwarms), this);
+        getServer().getPluginManager().registerEvents(
+                new CustodyListener(custody), this);
         getCommand("flow").setExecutor(new FlowCommand(offices));
         getCommand("faction").setExecutor(new FactionCommand(factions));
         getCommand("gta7tv").setExecutor(new MediaCommand(media));
+        getCommand("gta7jail").setExecutor(new JailCommand(custody));
 
         getServer().getScheduler().runTaskTimer(this, () -> offices.tickFlow(FLOW_PER_TICK),
                 FLOW_TICK_PERIOD, FLOW_TICK_PERIOD);
@@ -66,8 +78,12 @@ public final class GTA7Plugin extends JavaPlugin {
                 WATCHER_DECAY_PERIOD, WATCHER_DECAY_PERIOD);
         getServer().getScheduler().runTaskTimer(this, enforcement::tick,
                 ENFORCEMENT_TICK_PERIOD, ENFORCEMENT_TICK_PERIOD);
+        getServer().getScheduler().runTaskTimer(this, rogueSwarms::tick,
+                ROGUE_SWARM_TICK_PERIOD, ROGUE_SWARM_TICK_PERIOD);
+        getServer().getScheduler().runTaskTimer(this, custody::tick,
+                CUSTODY_TICK_PERIOD, CUSTODY_TICK_PERIOD);
 
-        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3 + IDUNA integration live.");
+        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3/VS4 + IDUNA integration live.");
     }
 
     @Override
@@ -75,6 +91,7 @@ public final class GTA7Plugin extends JavaPlugin {
         if (offices != null) offices.save();
         if (partyStores != null) partyStores.save();
         if (factions != null) factions.save();
+        if (custody != null) custody.save();
         getLogger().info("GTA7 disabled.");
     }
 }

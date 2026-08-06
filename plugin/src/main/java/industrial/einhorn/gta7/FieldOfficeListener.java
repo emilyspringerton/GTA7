@@ -77,7 +77,12 @@ final class FieldOfficeListener implements Listener {
     }
 
     private void claim(Player player, Location loc) {
-        offices.claim(loc, player.getUniqueId());
+        if (offices.isScarredUnclaimed(FieldOfficeManager.keyOf(loc))) {
+            offices.claimScarred(loc, player.getUniqueId());
+            player.sendMessage("§7[GTA7] §fThis Field Office bears a scar from a Rogue Swarm -- Flow generation is halved here.");
+        } else {
+            offices.claim(loc, player.getUniqueId());
+        }
         watchers.bump(loc, 15);
         factions.addRep(player.getUniqueId(), REP_PER_CLAIM);
         String line = player.getName() + " claimed a Field Office at " + fmt(loc) + ".";

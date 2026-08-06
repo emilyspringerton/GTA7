@@ -12,3 +12,6 @@ commands:
   gta7tv:
     description: Place a broadcast TV showing recent GTA7 city activity.
     usage: /gta7tv
+  gta7jail:
+    description: (Op only) Set the Custody Lock jail location to your current position.
+    usage: /gta7jail
