@@ -1,0 +1,44 @@
+name: GTA7 CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: gta7-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build plugin jar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # No test suite exists yet in plugin/src (this is a Paper plugin --
+      # real gameplay verification needs a live connected client, which
+      # nothing in CI can provide). This job is a build gate only: does the
+      # plugin compile clean against the pinned paper-api version.
+      - name: mvn package
+        working-directory: plugin
+        run: mvn -B package
+
+      - name: Upload plugin jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: gta7-plugin-${{ github.run_number }}-${{ github.sha }}
+          path: plugin/target/gta7-*.jar
+          if-no-files-found: error
