@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-08-06
+- Added GitHub Actions CI (build gate: JDK 21 + mvn package + jar artifact upload). No test suite exists yet; real gameplay verification needs a connected client CI can't provide.
 - Recorded the founder's CRAZY_KRANKENVAGEN (ambulance/paramedic-mission) vehicle concept in docs/NORTHSTAR.md's Open Questions -- real GTA Paramedic-mission tradition, mapped onto GTA7's existing RogueSwarmManager/MediaManager patterns. Not built -- depends on the still-unresolved general vehicle question. (sess-20260723-2347-df115bd5)
 - S171-04 chat bridge, EINHORN_SURVIVAL side: ChatBridgeListener posts real player chat to IDUNA, ChatBridgePoller relays GFD-origin messages into Minecraft chat prefixed [DragonsNShit]. Verified end-to-end via curl before writing Java, deployed, confirmed enabling cleanly. GFD side not yet built. (sess-20260723-2347-df115bd5)
 
