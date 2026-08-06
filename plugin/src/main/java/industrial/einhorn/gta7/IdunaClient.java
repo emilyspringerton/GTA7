@@ -11,6 +11,8 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,16 @@ final class IdunaClient {
     private static final Pattern TOKEN_RE = Pattern.compile("\"access_token\"\\s*:\\s*\"([^\"]+)\"");
     private static final Pattern EXPIRES_RE = Pattern.compile("\"expires_in\"\\s*:\\s*(\\d+)");
     private static final Pattern PLAYER_ID_RE = Pattern.compile("\"player_id\"\\s*:\\s*\"([^\"]+)\"");
+    private static final Pattern CHAT_OBJECT_RE = Pattern.compile("\\{[^{}]*\\}");
+    private static final Pattern ID_RE = Pattern.compile("\"id\"\\s*:\\s*(\\d+)");
+    private static final Pattern SENDER_NAME_RE = Pattern.compile("\"sender_name\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
+    private static final Pattern SENDER_SOURCE_RE = Pattern.compile("\"sender_source\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
+    private static final Pattern BODY_RE = Pattern.compile("\"body\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
+
+    // Minimal shape for a chat_messages row (see IDUNA's ChatMessagesHandler).
+    // No player_id/UUID -- this endpoint's sender identity is display-name-
+    // only by design, same as its existing mud/battlegrounds bridge.
+    record ChatMessage(long id, String senderName, String senderSource, String body) {}
 
     private final JavaPlugin plugin;
     private final String baseUrl;
@@ -143,6 +155,74 @@ final class IdunaClient {
             plugin.getLogger().warning("IDUNA player register failed: " + e.getMessage());
             return null;
         }
+    }
+
+    // S171-04 chat bridge: posts to the real, already-existing
+    // /api/v1/chat/messages endpoint (built for mud<->battlegrounds,
+    // extended for gfd_server/einhorn_survival -- see
+    // GoblinFoxDragon/docs2/CHAT_BRIDGE_TO_EINHORN_SURVIVAL_SPEC.md).
+    // Fire-and-log, same as postApple -- a failed chat relay shouldn't
+    // break local chat.
+    void postChat(String senderName, String body) {
+        try {
+            String jsonBody = "{"
+                    + "\"channel\":\"gta7\","
+                    + "\"sender_name\":\"" + escape(senderName) + "\","
+                    + "\"sender_source\":\"einhorn_survival\","
+                    + "\"body\":\"" + escape(body) + "\""
+                    + "}";
+            HttpRequest req = HttpRequest.newBuilder(URI.create(baseUrl + "/api/v1/chat/messages"))
+                    .header("Authorization", "Bearer " + ensureToken())
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+            HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() / 100 != 2) {
+                plugin.getLogger().warning("IDUNA chat post failed (" + resp.statusCode() + "): " + resp.body());
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("IDUNA chat post failed: " + e.getMessage());
+        }
+    }
+
+    // Polls for new messages since sinceId, GFD-origin only (filtered
+    // client-side -- the real endpoint has no exclude_server param, see the
+    // spec doc's own note on this). Never throws; returns empty on failure
+    // so a transient IDUNA hiccup doesn't spam warnings every poll tick.
+    List<ChatMessage> pollGfdChat(long sinceId) {
+        List<ChatMessage> out = new ArrayList<>();
+        try {
+            HttpRequest req = HttpRequest.newBuilder(
+                            URI.create(baseUrl + "/api/v1/chat/messages?since_id=" + sinceId + "&limit=50"))
+                    .header("Authorization", "Bearer " + ensureToken())
+                    .GET().build();
+            HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() / 100 != 2) {
+                plugin.getLogger().warning("IDUNA chat poll failed (" + resp.statusCode() + "): " + resp.body());
+                return out;
+            }
+            Matcher objMatcher = CHAT_OBJECT_RE.matcher(resp.body());
+            while (objMatcher.find()) {
+                String obj = objMatcher.group();
+                Matcher sourceM = SENDER_SOURCE_RE.matcher(obj);
+                if (!sourceM.find() || !"gfd_server".equals(unescape(sourceM.group(1)))) continue;
+
+                Matcher idM = ID_RE.matcher(obj);
+                Matcher nameM = SENDER_NAME_RE.matcher(obj);
+                Matcher bodyM = BODY_RE.matcher(obj);
+                if (idM.find() && nameM.find() && bodyM.find()) {
+                    out.add(new ChatMessage(Long.parseLong(idM.group(1)),
+                            unescape(nameM.group(1)), "gfd_server", unescape(bodyM.group(1))));
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("IDUNA chat poll failed: " + e.getMessage());
+        }
+        return out;
+    }
+
+    private static String unescape(String s) {
+        return s.replace("\\\"", "\"").replace("\\\\", "\\");
     }
 
     private static String escape(String s) {

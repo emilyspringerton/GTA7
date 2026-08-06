@@ -10,6 +10,7 @@ import java.nio.file.Path;
 // VS3: Media broadcast TVs + Factions.
 // VS4: Rogue Swarms (containment event, district scar) + Custody Lock.
 // IDUNA/WOTAN integration: real Apple receipts + shared player identity.
+// S171-04: GFD <-> EINHORN_SURVIVAL chat bridge (EINHORN_SURVIVAL side).
 // See docs/NORTHSTAR.md.
 public final class GTA7Plugin extends JavaPlugin {
 
@@ -20,6 +21,7 @@ public final class GTA7Plugin extends JavaPlugin {
     private static final long ENFORCEMENT_TICK_PERIOD = 20L * 20; // every 20s
     private static final long ROGUE_SWARM_TICK_PERIOD = 20L * 15; // every 15s
     private static final long CUSTODY_TICK_PERIOD = 20L * 5;      // every 5s
+    private static final long CHAT_BRIDGE_TICK_PERIOD = 20L * 5;  // every 5s
     private static final String IDUNA_BASE_URL = "http://localhost:8080";
     private static final Path IDUNA_SECRETS_FILE = Path.of("/home/fatbaby/IDUNA/var/agent-secrets.env");
 
@@ -67,6 +69,8 @@ public final class GTA7Plugin extends JavaPlugin {
                 new RogueSwarmListener(rogueSwarms), this);
         getServer().getPluginManager().registerEvents(
                 new CustodyListener(custody), this);
+        getServer().getPluginManager().registerEvents(
+                new ChatBridgeListener(iduna), this);
         getCommand("flow").setExecutor(new FlowCommand(offices));
         getCommand("faction").setExecutor(new FactionCommand(factions));
         getCommand("gta7tv").setExecutor(new MediaCommand(media));
@@ -83,7 +87,11 @@ public final class GTA7Plugin extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, custody::tick,
                 CUSTODY_TICK_PERIOD, CUSTODY_TICK_PERIOD);
 
-        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3/VS4 + IDUNA integration live.");
+        ChatBridgePoller chatBridge = new ChatBridgePoller(this, iduna);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, chatBridge::tick,
+                CHAT_BRIDGE_TICK_PERIOD, CHAT_BRIDGE_TICK_PERIOD);
+
+        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3/VS4 + IDUNA integration + chat bridge live.");
     }
 
     @Override
