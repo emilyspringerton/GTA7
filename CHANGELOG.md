@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-06
+
+- VS4 -- Rogue Swarms (triggers at alertness 90, 3 containment objectives, cross-faction reward, district scar on failure) + Custody Lock (Enforcement-kill sends players to a real jail, GameMode.SPECTATOR restriction, /gta7jail sets the location). All 5 NORTHSTAR.md milestones now live. (sess-20260723-2347-df115bd5)
+
+
 ## 2026-08-05
 
 - feat: repo created, full scoping doc (docs/NORTHSTAR.md) mapping TRAPX doctrine onto real Paper/Minecraft plugin systems, VS0-VS4 milestone plan. Loadable plugin skeleton built, deployed to EINHORN_SURVIVAL, confirmed live in server.log.
