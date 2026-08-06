@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-08-06
+- S171-04 chat bridge, EINHORN_SURVIVAL side: ChatBridgeListener posts real player chat to IDUNA, ChatBridgePoller relays GFD-origin messages into Minecraft chat prefixed [DragonsNShit]. Verified end-to-end via curl before writing Java, deployed, confirmed enabling cleanly. GFD side not yet built. (sess-20260723-2347-df115bd5)
 
 - VS4 -- Rogue Swarms (triggers at alertness 90, 3 containment objectives, cross-faction reward, district scar on failure) + Custody Lock (Enforcement-kill sends players to a real jail, GameMode.SPECTATOR restriction, /gta7jail sets the location). All 5 NORTHSTAR.md milestones now live. (sess-20260723-2347-df115bd5)
 
