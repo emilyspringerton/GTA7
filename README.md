@@ -72,10 +72,20 @@ reputation. `/faction` (no arguments) shows your current faction and reputation.
 activity — claims, flips, Contest Windows, Enforcement callouts, Party Store closures. No
 resource pack or client mod needed; it's a real server-placed entity anyone can see.
 
-### What's not built yet
+### Rogue Swarms — when a Field Office gets too loud
 
-Rogue Swarms (forced cross-faction mob-horde events) and Custody Lock (a real jail for losing a
-Contest Window) are designed but not implemented — see `docs/NORTHSTAR.md` for the full roadmap.
+Push a Field Office's Watcher alertness high enough (sustained claims, contests, PvP) and instead
+of just Enforcement, a **Rogue Swarm** breaks out — 3 real containment points around the office,
+each with hostile mobs. Anyone can help, regardless of faction — fighting counts. Clear all 3
+within 3 minutes and everyone who helped gets faction reputation. Miss the window and the Field
+Office is **scarred**: it reverts to unclaimed, and Flow generation there is halved permanently
+once someone reclaims it.
+
+### Custody Lock — real consequences for losing to Enforcement
+
+Get killed by an Enforcement squad and you're taken into custody — teleported to the server's real
+jail, restricted (can't move, interact, or be hit) for 2 minutes, then released automatically.
+Log out mid-sentence and you're still serving it when you log back in.
 
 ## For developers
 

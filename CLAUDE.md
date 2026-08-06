@@ -39,8 +39,8 @@ loaded, same verification discipline as every other plugin on this server.
 
 ## Status
 
-**VS0 + VS1 + VS2 + VS3 + IDUNA/WOTAN integration live** as of 2026-08-05. See `README.md` for
-the player-facing how-to-play guide.
+**VS0 + VS1 + VS2 + VS3 + VS4 + IDUNA/WOTAN integration live** as of 2026-08-06. See `README.md`
+for the player-facing how-to-play guide.
 
 - **VS0**: right-click a Beacon to claim it as a Field Office; right-click someone else's to open
   a 60s Contest Window (flips to the challenger if within 15 blocks when it resolves); `/flow`
@@ -77,7 +77,14 @@ playtest and report back.
   <FREQUENCY|BLOC|PROCUREMENT>` joins one of the three player-alignable factions (real Bukkit
   Team for nametag color); claims/flips earn faction reputation.
 
-VS4+ (Rogue Swarms, Custody Lock) not started — see `docs/NORTHSTAR.md`.
+- **VS4**: Rogue Swarms trigger automatically when a Field Office's Watcher alertness hits 90 —
+  3 real containment objectives, any faction can help, all participants get faction rep on
+  success; failure scars the FO (unclaimed, halved Flow once reclaimed). Dying to Enforcement
+  sends a player to Custody Lock (`/gta7jail` sets the real jail location, op-only) — real
+  `GameMode.SPECTATOR` restriction for 2 minutes, not a boundary check.
+
+All 5 milestones (VS0-VS4) from `docs/NORTHSTAR.md` are now live. VS5+ (the RPG layer) was
+explicitly left unscoped in the northstar and remains so.
 
 ## Commit Protocol (standing instruction)
 
