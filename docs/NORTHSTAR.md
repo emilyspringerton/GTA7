@@ -152,7 +152,18 @@ last milestone, not an early one; VS0–VS4 all stand on their own without it.
 5. **Vehicles** — TRAPX's own Open Questions list this as unresolved too (GTA-style drivable city
    vs. foot/transit only). Minecraft has no native vehicles beyond boats/minecarts/horses — would
    need either those repurposed narratively, or a custom entity-based vehicle plugin (real scope,
-   not attempted before VS4).
+   not attempted before VS4). Founder's own concrete pitch for what a first vehicle mode should be,
+   real-time: "CRAZY_KRANKENVAGEN" — `Krankenwagen` is German for ambulance, and the concept maps
+   directly onto GTA's own real, well-known Paramedic missions (III/Vice City/San Andreas): drive
+   an ambulance, pick up a critically injured NPC, race them to a hospital point before a timer
+   runs out, chain runs back-to-back for an escalating reward, one bad crash ends the streak. Real
+   fit for GTA7's existing systems rather than a bolted-on minigame: a wounded-NPC spawn could
+   piggyback on `RogueSwarmManager`'s existing "spawn something near a hot Field Office" pattern,
+   and a completed run is a natural `MediaManager.broadcast()` moment (a completed/failed run is
+   exactly the kind of "recent city activity" the broadcast TVs already show). Not built — no
+   vehicle entity exists in GTA7 yet, and this needs the general vehicle question above resolved
+   first (this pitch assumes some kind of drivable, not-a-vanilla-boat vehicle already exists).
+   Recorded here so it isn't lost, not committed as a build target yet.
 6. **Relationship to TRAPX-on-GFD** — does GTA7 stay a parallel, Minecraft-native expression of
    the same doctrine indefinitely, or does it eventually get superseded once TRAPX's own voxel
    engine catches up? Not answered here — flagged so a future session doesn't assume either way.
