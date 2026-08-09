@@ -75,6 +75,7 @@ public final class GTA7Plugin extends JavaPlugin {
         getCommand("faction").setExecutor(new FactionCommand(factions));
         getCommand("gta7tv").setExecutor(new MediaCommand(media));
         getCommand("gta7jail").setExecutor(new JailCommand(custody));
+        getCommand("sudoku").setExecutor(new SudokuCommand());
 
         getServer().getScheduler().runTaskTimer(this, () -> offices.tickFlow(FLOW_PER_TICK),
                 FLOW_TICK_PERIOD, FLOW_TICK_PERIOD);
