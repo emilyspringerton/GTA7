@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-09
+
+- feat(cmd): /sudoku self-KO command — strikeLightningEffect (cosmetic) + setHealth(0.0) for a guaranteed respawn if stuck in terrain; no killer LivingEntity involved so CustodyListener's Enforcement-kill check never fires, doesn't send the player to jail (sess-20260809-1420-e9d3d7f8)
+
+
 ## 2026-08-06
 - Added GitHub Actions CI (build gate: JDK 21 + mvn package + jar artifact upload). No test suite exists yet; real gameplay verification needs a connected client CI can't provide.
 - Recorded the founder's CRAZY_KRANKENVAGEN (ambulance/paramedic-mission) vehicle concept in docs/NORTHSTAR.md's Open Questions -- real GTA Paramedic-mission tradition, mapped onto GTA7's existing RogueSwarmManager/MediaManager patterns. Not built -- depends on the still-unresolved general vehicle question. (sess-20260723-2347-df115bd5)
