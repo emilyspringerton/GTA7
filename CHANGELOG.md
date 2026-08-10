@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-10
+
+- Party Stores：TNT 保底交易 + 隨機藥水池 + 保底食物 (PartyStoreStock) (sess-20260810-0505-a53abca2)
+
+
 ## 2026-08-09
 
 - feat(cmd): /sudoku self-KO command — strikeLightningEffect (cosmetic) + setHealth(0.0) for a guaranteed respawn if stuck in terrain; no killer LivingEntity involved so CustodyListener's Enforcement-kill check never fires, doesn't send the player to jail (sess-20260809-1420-e9d3d7f8)
