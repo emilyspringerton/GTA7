@@ -15,6 +15,9 @@ commands:
   gta7jail:
     description: (Op only) Set the Custody Lock jail location to your current position.
     usage: /gta7jail
+  gta7hospital:
+    description: (Op only) Set CRAZY_KRANKENVAGEN's hospital delivery point to your current position.
+    usage: /gta7hospital
   sudoku:
     description: Self-KO to respawn -- use if you're stuck in terrain.
     usage: /sudoku

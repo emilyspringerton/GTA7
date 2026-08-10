@@ -129,9 +129,34 @@ doctrine expressed on a different substrate.
 - *Acceptance*: a Rogue Swarm event forces two rival factions into the same fight; a captured
   player serves real time in a real structure other players can see them in.
 
-### VS5+ — RPG layer (open, not scoped yet)
+### VS5 — CRAZY_KRANKENVAGEN (2026-08-10)
+- Real vanilla Boat entities repurposed as ambulances (Open Question 5, above, resolved in favor
+  of narrative repurposing over a custom vehicle plugin) — `Boat#setMaxSpeed` (confirmed present
+  in this repo's own pinned paper-api) is the real "modify the physics" lever, boosted while a
+  run is active.
+- A wounded-NPC spawn (an invulnerable, stationary Villager) piggybacks on `RogueSwarmManager`'s
+  own "spawn something near a Field Office" pattern, exactly as this doc's earlier open-question
+  pitch described. Right-click while riding a boat to pick the patient up.
+- Race to a settable hospital point (`/gta7hospital`, same admin-location shape as `/gta7jail`)
+  within 90s. A real crash (`VehicleBlockCollisionEvent`/`VehicleEntityCollisionEvent`) or
+  abandoning the ambulance mid-run ends the run early.
+- Chain runs back-to-back for an escalating reward (faction reputation, scales with current
+  streak) — a bad crash or timeout resets the streak to 0. A completed/failed run is a
+  `MediaManager.broadcast()` moment, same "recent city activity" framing every other GTA7 system
+  already uses.
+- *Acceptance*: a player can flag down (spawn), pick up, race, and deliver a patient using a real
+  boat with real boosted physics, with visible chain-streak stakes.
+- Implementation: `KrankenvagenManager`/`KrankenvagenListener`/`HospitalCommand`. Verified: clean
+  `mvn package` build (Maven itself was missing from this box post-reboot — see this repo's own
+  `CLAUDE.md` for the workaround and `sudo-queue/15-install-maven.sh` for the permanent fix), a
+  clean plugin enable line in `server.log` after deploy. **Actual gameplay** (does pickup/
+  delivery/crash-detection really work end to end) hasn't been exercised by a real connected
+  client, same honesty convention every other GTA7 milestone's own status note already uses —
+  founder should playtest and report back.
+
+### VS6+ — RPG layer (open, not scoped yet)
 Explicitly not planned in detail here — see Open Questions. Whatever shape this takes, it's the
-last milestone, not an early one; VS0–VS4 all stand on their own without it.
+last milestone, not an early one; VS0–VS5 all stand on their own without it.
 
 ---
 
@@ -150,20 +175,13 @@ last milestone, not an early one; VS0–VS4 all stand on their own without it.
    10-man/Annex/1-man assignment, how long sentences last, whether there's a sub-loop (contraband,
    escape) or it's pure social/chat space.
 5. **Vehicles** — TRAPX's own Open Questions list this as unresolved too (GTA-style drivable city
-   vs. foot/transit only). Minecraft has no native vehicles beyond boats/minecarts/horses — would
-   need either those repurposed narratively, or a custom entity-based vehicle plugin (real scope,
-   not attempted before VS4). Founder's own concrete pitch for what a first vehicle mode should be,
-   real-time: "CRAZY_KRANKENVAGEN" — `Krankenwagen` is German for ambulance, and the concept maps
-   directly onto GTA's own real, well-known Paramedic missions (III/Vice City/San Andreas): drive
-   an ambulance, pick up a critically injured NPC, race them to a hospital point before a timer
-   runs out, chain runs back-to-back for an escalating reward, one bad crash ends the streak. Real
-   fit for GTA7's existing systems rather than a bolted-on minigame: a wounded-NPC spawn could
-   piggyback on `RogueSwarmManager`'s existing "spawn something near a hot Field Office" pattern,
-   and a completed run is a natural `MediaManager.broadcast()` moment (a completed/failed run is
-   exactly the kind of "recent city activity" the broadcast TVs already show). Not built — no
-   vehicle entity exists in GTA7 yet, and this needs the general vehicle question above resolved
-   first (this pitch assumes some kind of drivable, not-a-vanilla-boat vehicle already exists).
-   Recorded here so it isn't lost, not committed as a build target yet.
+   vs. foot/transit only). Minecraft has no native vehicles beyond boats/minecarts/horses.
+   **Resolved 2026-08-10** for the first real vehicle mode, founder real-time: "maybe make the
+   boats ambulances and modify the physics?" — repurposing real vanilla Boat entities rather than
+   building a custom entity-based vehicle plugin, resolving this open question's own original
+   framing ("would need either those repurposed narratively, or a custom entity-based vehicle
+   plugin") in favor of the narrative-repurposing option. See VS5 below for the shipped feature
+   this unblocked: **CRAZY_KRANKENVAGEN**.
 6. **Relationship to TRAPX-on-GFD** — does GTA7 stay a parallel, Minecraft-native expression of
    the same doctrine indefinitely, or does it eventually get superseded once TRAPX's own voxel
    engine catches up? Not answered here — flagged so a future session doesn't assume either way.
