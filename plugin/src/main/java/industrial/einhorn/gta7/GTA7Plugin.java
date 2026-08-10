@@ -9,6 +9,7 @@ import java.nio.file.Path;
 // VS2: K9 Doctrine (Contest Window defense) + Party Stores.
 // VS3: Media broadcast TVs + Factions.
 // VS4: Rogue Swarms (containment event, district scar) + Custody Lock.
+// VS5: CRAZY_KRANKENVAGEN -- ambulance-boat paramedic runs (KrankenvagenManager).
 // IDUNA/WOTAN integration: real Apple receipts + shared player identity.
 // S171-04: GFD <-> EINHORN_SURVIVAL chat bridge (EINHORN_SURVIVAL side).
 // See docs/NORTHSTAR.md.
@@ -22,6 +23,7 @@ public final class GTA7Plugin extends JavaPlugin {
     private static final long ROGUE_SWARM_TICK_PERIOD = 20L * 15; // every 15s
     private static final long CUSTODY_TICK_PERIOD = 20L * 5;      // every 5s
     private static final long CHAT_BRIDGE_TICK_PERIOD = 20L * 5;  // every 5s
+    private static final long KRANKENVAGEN_TICK_PERIOD = 20L * 5; // every 5s -- timer expiry check + wounded-NPC spawn
     private static final String IDUNA_BASE_URL = "http://localhost:8080";
     private static final Path IDUNA_SECRETS_FILE = Path.of("/home/fatbaby/IDUNA/var/agent-secrets.env");
 
@@ -29,6 +31,7 @@ public final class GTA7Plugin extends JavaPlugin {
     private PartyStoreManager partyStores;
     private FactionManager factions;
     private CustodyManager custody;
+    private KrankenvagenManager krankenvagen;
 
     @Override
     public void onEnable() {
@@ -54,6 +57,8 @@ public final class GTA7Plugin extends JavaPlugin {
         EnforcementManager enforcement = new EnforcementManager(this, offices, watchers, media);
         K9Manager k9 = new K9Manager();
         RogueSwarmManager rogueSwarms = new RogueSwarmManager(this, offices, watchers, media, factions);
+        krankenvagen = new KrankenvagenManager(this, offices, factions, media);
+        krankenvagen.load();
 
         getServer().getPluginManager().registerEvents(
                 new FieldOfficeListener(this, offices, contests, receipts, watchers, k9, media, factions), this);
@@ -71,10 +76,15 @@ public final class GTA7Plugin extends JavaPlugin {
                 new CustodyListener(custody), this);
         getServer().getPluginManager().registerEvents(
                 new ChatBridgeListener(iduna), this);
+        getServer().getPluginManager().registerEvents(
+                new KrankenvagenListener(krankenvagen), this);
+        getServer().getPluginManager().registerEvents(
+                new RespawnGearListener(), this);
         getCommand("flow").setExecutor(new FlowCommand(offices));
         getCommand("faction").setExecutor(new FactionCommand(factions));
         getCommand("gta7tv").setExecutor(new MediaCommand(media));
         getCommand("gta7jail").setExecutor(new JailCommand(custody));
+        getCommand("gta7hospital").setExecutor(new HospitalCommand(krankenvagen));
         getCommand("sudoku").setExecutor(new SudokuCommand());
 
         getServer().getScheduler().runTaskTimer(this, () -> offices.tickFlow(FLOW_PER_TICK),
@@ -87,12 +97,14 @@ public final class GTA7Plugin extends JavaPlugin {
                 ROGUE_SWARM_TICK_PERIOD, ROGUE_SWARM_TICK_PERIOD);
         getServer().getScheduler().runTaskTimer(this, custody::tick,
                 CUSTODY_TICK_PERIOD, CUSTODY_TICK_PERIOD);
+        getServer().getScheduler().runTaskTimer(this, krankenvagen::tick,
+                KRANKENVAGEN_TICK_PERIOD, KRANKENVAGEN_TICK_PERIOD);
 
         ChatBridgePoller chatBridge = new ChatBridgePoller(this, iduna);
         getServer().getScheduler().runTaskTimerAsynchronously(this, chatBridge::tick,
                 CHAT_BRIDGE_TICK_PERIOD, CHAT_BRIDGE_TICK_PERIOD);
 
-        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3/VS4 + IDUNA integration + chat bridge live.");
+        getLogger().info("GTA7 enabled -- VS0/VS1/VS2/VS3/VS4/VS5 + IDUNA integration + chat bridge live.");
     }
 
     @Override
@@ -101,6 +113,7 @@ public final class GTA7Plugin extends JavaPlugin {
         if (partyStores != null) partyStores.save();
         if (factions != null) factions.save();
         if (custody != null) custody.save();
+        if (krankenvagen != null) krankenvagen.save();
         getLogger().info("GTA7 disabled.");
     }
 }

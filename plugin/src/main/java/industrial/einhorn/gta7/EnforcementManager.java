@@ -2,6 +2,8 @@ package industrial.einhorn.gta7;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +29,13 @@ final class EnforcementManager {
     private static final int THRESHOLD = 65;
     private static final int SQUAD_SIZE = 2;
     private static final double TARGET_RADIUS = 40.0;
+    // Founder real-time, 2026-08-10 ("ok HTA7 this shit is hard" -> Enforcement squads named as
+    // the specific pain point): plain vanilla Zombie stats (20 HP, 3 base attack damage, TWO of
+    // them at once) were never explicitly tuned -- a real, unintentionally-brutal difficulty
+    // spike, not a designed one. Softened, not removed -- still a real fight, paired with
+    // RespawnGearListener's own wooden-sword-on-respawn so a player isn't fighting back barehanded.
+    private static final double ENFORCEMENT_MAX_HEALTH = 14.0;
+    private static final double ENFORCEMENT_ATTACK_DAMAGE = 2.0;
 
     private final JavaPlugin plugin;
     private final FieldOfficeManager offices;
@@ -78,6 +87,13 @@ final class EnforcementManager {
             LivingEntity entity = (LivingEntity) spawnAt.getWorld().spawnEntity(spawnAt, EntityType.ZOMBIE);
             entity.setCustomName("§cEnforcement");
             entity.setCustomNameVisible(true);
+            AttributeInstance maxHealth = entity.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealth != null) {
+                maxHealth.setBaseValue(ENFORCEMENT_MAX_HEALTH);
+                entity.setHealth(ENFORCEMENT_MAX_HEALTH);
+            }
+            AttributeInstance attackDamage = entity.getAttribute(Attribute.ATTACK_DAMAGE);
+            if (attackDamage != null) attackDamage.setBaseValue(ENFORCEMENT_ATTACK_DAMAGE);
             squad.add(entity.getUniqueId());
 
             if (owner != null && owner.isOnline()
