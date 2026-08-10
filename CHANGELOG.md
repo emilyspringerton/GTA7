@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2026-08-10
+- Enforcement squad 難度調整 + 重生保底木劍 + Krankenvagen（騎羊駝救援、低血量自動派遣） (sess-20260810-0505-a53abca2)
 
 - Party Stores：TNT 保底交易 + 隨機藥水池 + 保底食物 (PartyStoreStock) (sess-20260810-0505-a53abca2)
 
