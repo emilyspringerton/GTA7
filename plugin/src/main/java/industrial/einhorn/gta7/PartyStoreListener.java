@@ -14,9 +14,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 // Party Stores (VS2): sneak + right-click an un-designated Villager to make
-// it a Party Store. Real trading (vanilla, unmodified) builds merchant
-// memory; sustained PvP nearby forces an early close, same "quiet after
-// dark" and "closes when it gets loud" spirit as PARTY_STORES.md.
+// it a Party Store. Trading builds merchant memory; sustained PvP nearby
+// forces an early close, same "quiet after dark" and "closes when it gets
+// loud" spirit as PARTY_STORES.md. Stock is custom, not vanilla-unmodified
+// -- see PartyStoreStock's own doc comment (2026-08-10: guaranteed TNT +
+// food, plus a per-store random potion selection).
 final class PartyStoreListener implements Listener {
 
     private static final long NIGHT_START = 13000;
@@ -41,6 +43,8 @@ final class PartyStoreListener implements Listener {
             if (!player.isSneaking()) return; // normal trade interaction, not our concern
             event.setCancelled(true);
             stores.designate(villager.getUniqueId());
+            PartyStoreStock.apply(villager); // TNT (guaranteed) + food (guaranteed, random) +
+                                              // a random potion subset -- see its own doc comment
             villager.setCustomName("§aParty Store");
             villager.setCustomNameVisible(true);
             player.sendMessage("§6[GTA7] §fParty Store designated.");
