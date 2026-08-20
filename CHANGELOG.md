@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-08-20
+- docs: rewrote README.md with a full command reference table (was missing /gta7jail,
+  /gta7hospital, /sudoku entirely) and a new CRAZY_KRANKENVAGEN how-to-play section (both the
+  driven boat/hospital mission and the self-service llama-ride rescue) that had never made it out
+  of CLAUDE.md's dev-facing Status notes. Founder: "and then please can you write the full gta7
+  readme especially the commands?" (sess-20260813-2154-dda37e8b)
+
 ## 2026-08-10
 - Enforcement squad 難度調整 + 重生保底木劍 + Krankenvagen（騎羊駝救援、低血量自動派遣） (sess-20260810-0505-a53abca2)
 
