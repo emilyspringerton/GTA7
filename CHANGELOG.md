@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-25
+
+- added auto-release CI job (PITVIPER pattern): real, non-prerelease GitHub release with the built plugin jar (sess-20260825-1938-f6bd411e)
+
+
 ## 2026-08-20
 - docs: rewrote README.md with a full command reference table (was missing /gta7jail,
   /gta7hospital, /sudoku entirely) and a new CRAZY_KRANKENVAGEN how-to-play section (both the
