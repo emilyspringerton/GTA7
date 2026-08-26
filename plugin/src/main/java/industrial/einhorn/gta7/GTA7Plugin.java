@@ -10,6 +10,7 @@ import java.nio.file.Path;
 // VS3: Media broadcast TVs + Factions.
 // VS4: Rogue Swarms (containment event, district scar) + Custody Lock.
 // VS5: CRAZY_KRANKENVAGEN -- ambulance-boat paramedic runs (KrankenvagenManager).
+// VS6: Historical railroad tech tree -- real rails placed unlocks real rail/minecart types (RailroadManager).
 // IDUNA/WOTAN integration: real Apple receipts + shared player identity.
 // S171-04: GFD <-> EINHORN_SURVIVAL chat bridge (EINHORN_SURVIVAL side).
 // See docs/NORTHSTAR.md.

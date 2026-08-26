@@ -84,7 +84,11 @@ playtest and report back.
   `GameMode.SPECTATOR` restriction for 2 minutes, not a boundary check.
 
 All 5 milestones (VS0-VS4) from `docs/NORTHSTAR.md` are now live. VS5+ (the RPG layer) was
-explicitly left unscoped in the northstar and remains so.
+explicitly left unscoped in the northstar itself — VS5 (CRAZY_KRANKENVAGEN, ambulance-boat
+paramedic runs) and VS6 (historical railroad tech tree, real rails placed unlocks real rail/
+minecart types) both shipped anyway as real, separate founder real-time asks, not a northstar
+update — see `GTA7Plugin.java`'s own header comment and `README.md`'s player-facing sections for
+both.
 
 ## Founder Real-Time Direction
 

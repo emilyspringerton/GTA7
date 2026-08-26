@@ -22,6 +22,7 @@ Access is open — real account required (no cracked/offline clients), no whitel
 | `/faction join <FREQUENCY\|BLOC\|PROCUREMENT>` | anyone | Joins (or switches to) one of the three player-alignable factions. |
 | `/gta7tv` | anyone | Places a real, floating broadcast screen at your location showing a rolling feed of recent city activity — claims, flips, contests, Enforcement, Party Store closures, Krankenvagen runs. No resource pack or client mod needed. |
 | `/sudoku` | anyone | Self-KO → immediate respawn. Use this if you're stuck in terrain (a hole, a void gap, wedged geometry) with no other way out. Does **not** count as an Enforcement kill, so it never sends you to Custody Lock. |
+| `/railroad` | anyone | Shows your current historical rail era and how many more rails you need to place to reach the next one. |
 | `/gta7jail` | op only | Sets the Custody Lock jail location to your current position. Set once by whoever runs the server. |
 | `/gta7hospital` | op only | Sets CRAZY_KRANKENVAGEN's hospital delivery point to your current position. Set once by whoever runs the server. |
 
@@ -124,6 +125,24 @@ speed cranks up, and it heals you for the length of a short, fast ride around th
 ejecting you. No boat, no hospital delivery needed — this one's automatic. It also dispatches
 itself: if your health drops critically low anywhere in the world, a Krankenvagen group spawns
 near you (once per minute per player) so you have a real shot at pulling through.
+
+### Historical railroad tech tree — build your way through five real rail eras
+
+Real vanilla rails and minecarts are the actual gameplay: place rails to progress. Five eras,
+each unlocking real rail/minecart types the ones before it don't have:
+
+| Era | Rails placed | Unlocks |
+|---|---|---|
+| Wooden Tramway | 0 | Plain rail |
+| Iron Rail | 50 | Powered rail |
+| Signal Era | 150 | Detector rail |
+| Industrial Rail | 400 | Activator rail, chest/furnace/hopper minecarts |
+| High-Speed Rail | 1000 | TNT minecart — the network is complete |
+
+Placing a rail or minecart type your own era hasn't reached yet is blocked, with a message
+telling you which era you need. `/railroad` shows your current era and how many more rails until
+the next one. Progress is per-player, tracked by real rails placed — no separate currency, no
+shop, just build.
 
 ## For developers
 
