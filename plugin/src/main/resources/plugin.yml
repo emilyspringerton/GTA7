@@ -21,3 +21,6 @@ commands:
   sudoku:
     description: Self-KO to respawn -- use if you're stuck in terrain.
     usage: /sudoku
+  railroad:
+    description: Check your historical railroad tech-tree era and progress toward the next one.
+    usage: /railroad

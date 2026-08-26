@@ -32,6 +32,7 @@ public final class GTA7Plugin extends JavaPlugin {
     private FactionManager factions;
     private CustodyManager custody;
     private KrankenvagenManager krankenvagen;
+    private RailroadManager railroad;
 
     @Override
     public void onEnable() {
@@ -43,6 +44,8 @@ public final class GTA7Plugin extends JavaPlugin {
         factions.load();
         custody = new CustodyManager(this);
         custody.load();
+        railroad = new RailroadManager(this);
+        railroad.load();
 
         IdunaClient iduna = new IdunaClient(this, IDUNA_BASE_URL, IDUNA_SECRETS_FILE);
         if (!iduna.isConfigured()) {
@@ -80,12 +83,15 @@ public final class GTA7Plugin extends JavaPlugin {
                 new KrankenvagenListener(krankenvagen), this);
         getServer().getPluginManager().registerEvents(
                 new RespawnGearListener(), this);
+        getServer().getPluginManager().registerEvents(
+                new RailroadListener(railroad), this);
         getCommand("flow").setExecutor(new FlowCommand(offices));
         getCommand("faction").setExecutor(new FactionCommand(factions));
         getCommand("gta7tv").setExecutor(new MediaCommand(media));
         getCommand("gta7jail").setExecutor(new JailCommand(custody));
         getCommand("gta7hospital").setExecutor(new HospitalCommand(krankenvagen));
         getCommand("sudoku").setExecutor(new SudokuCommand());
+        getCommand("railroad").setExecutor(new RailroadCommand(railroad));
 
         getServer().getScheduler().runTaskTimer(this, () -> offices.tickFlow(FLOW_PER_TICK),
                 FLOW_TICK_PERIOD, FLOW_TICK_PERIOD);
@@ -114,6 +120,7 @@ public final class GTA7Plugin extends JavaPlugin {
         if (factions != null) factions.save();
         if (custody != null) custody.save();
         if (krankenvagen != null) krankenvagen.save();
+        if (railroad != null) railroad.save();
         getLogger().info("GTA7 disabled.");
     }
 }
