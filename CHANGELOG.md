@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-26
+
+- VS6: historical railroad tech tree shipped (S202-29). 5 real historical eras gated by rails placed, RailroadListener denies rail/minecart types below your era via BlockPlaceEvent/VehicleCreateEvent, /railroad shows progress. mvn package BUILD SUCCESS, deployed (restart queued). Apple #16062. (sess-20260825-1938-f6bd411e)
+
+
 ## 2026-08-25
 
 - added auto-release CI job (PITVIPER pattern): real, non-prerelease GitHub release with the built plugin jar (sess-20260825-1938-f6bd411e)
