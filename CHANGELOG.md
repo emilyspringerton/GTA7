@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2026-08-30
+
+- EnforcementManager: real 'humanness fingerprint' -- zombie target-acquisition now uses a PARENA-compiled (mishri+gta7 stdlib), gaussian-jittered reaction delay + bounded hesitation chance instead of instant, uniform setTarget(). Logged per-mob. Full mvn package verified. (sess-20260825-1938-f6bd411e)
+
+
 ## 2026-08-26
 
 - VS6: historical railroad tech tree shipped (S202-29). 5 real historical eras gated by rails placed, RailroadListener denies rail/minecart types below your era via BlockPlaceEvent/VehicleCreateEvent, /railroad shows progress. mvn package BUILD SUCCESS, deployed (restart queued). Apple #16062. (sess-20260825-1938-f6bd411e)
