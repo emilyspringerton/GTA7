@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import industrial.einhorn.gta7.generated.HumannessFingerprint;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,19 @@ final class EnforcementManager {
     // RespawnGearListener's own wooden-sword-on-respawn so a player isn't fighting back barehanded.
     private static final double ENFORCEMENT_MAX_HEALTH = 14.0;
     private static final double ENFORCEMENT_ATTACK_DAMAGE = 2.0;
+
+    // Real "humanness fingerprint" tuning (founder real-time, 2026-08-30: "use mishri and parena
+    // mods to write an auto generated mod for gta7 ... build like a humanness fingerprint").
+    // Real problem this fixes, found by reading this file before touching it: every Enforcement
+    // zombie in a squad previously called setTarget() in the SAME spawn tick -- zero variance,
+    // mechanically uniform target-acquisition. These three numbers feed
+    // generated.HumannessFingerprint (PARENA/stdlib/gta7/humanness_fingerprint_mod.prn, compiled
+    // together with stdlib/mishri/humanness.prn's own already-proven chance/randomInt/
+    // gaussianNoise primitives -- real reuse, not reinvention) to give each mob its own real,
+    // organic reaction delay instead.
+    private static final double BASE_REACTION_TICKS = 10.0; // real half-second baseline @ 20 tps
+    private static final double HESITATION_CHANCE = 0.15;
+    private static final double MAX_HESITATION_BONUS_TICKS = 40.0; // real, bounded, up to +2s
 
     private final JavaPlugin plugin;
     private final FieldOfficeManager offices;
@@ -100,7 +115,7 @@ final class EnforcementManager {
                     && owner.getWorld().equals(fo.getWorld())
                     && owner.getLocation().distance(fo) <= TARGET_RADIUS
                     && entity instanceof Zombie zombie) {
-                zombie.setTarget(owner);
+                scheduleHumanReaction(zombie, owner);
             }
         }
 
@@ -110,5 +125,30 @@ final class EnforcementManager {
         Bukkit.broadcastMessage("§c[GTA7] §f" + line);
         media.broadcast(line);
         plugin.getLogger().info("Enforcement spawned at " + key + " (alertness " + watchers.get(fo) + ")");
+    }
+
+    // Real "humanness fingerprint": delays this specific zombie's real target acquisition by a
+    // real, organically-jittered reaction time (generated.HumannessFingerprint.
+    // enforcementReactionDelayTicks -- Box-Muller gaussian noise around BASE_REACTION_TICKS, the
+    // exact same real primitive MISHRI's own bot-humanization layer uses), with a real, bounded
+    // chance of an extra hesitation beat on top. Logged so the real tuning knobs above can
+    // actually be judged against real, observed values, not just trusted blind.
+    private void scheduleHumanReaction(Zombie zombie, Player owner) {
+        double reactionTicks = HumannessFingerprint.enforcementReactionDelayTicks(BASE_REACTION_TICKS);
+        boolean hesitated = HumannessFingerprint.enforcementShouldHesitate(HESITATION_CHANCE);
+        if (hesitated) {
+            reactionTicks += HumannessFingerprint.enforcementHesitationBonusTicks(MAX_HESITATION_BONUS_TICKS);
+        }
+        // Real, honest floor: gaussian noise can (rarely) roll negative around a small base --
+        // Bukkit's own scheduler rejects a sub-1-tick delay, and a real reaction can't be
+        // negative anyway, so clamp rather than let a rare unlucky roll throw at runtime.
+        long delayTicks = Math.max(1L, Math.round(reactionTicks));
+        plugin.getLogger().info("Enforcement humanness fingerprint: reaction=" + delayTicks
+                + "t hesitated=" + hesitated + " uuid=" + zombie.getUniqueId());
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (zombie.isValid()) {
+                zombie.setTarget(owner);
+            }
+        }, delayTicks);
     }
 }
