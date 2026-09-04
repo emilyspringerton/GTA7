@@ -111,6 +111,38 @@ doctrine expressed on a different substrate.
 - *Acceptance*: a K9 unit meaningfully slows a Contest Window flip attempt; a Party Store closes
   early after sustained nearby PvP and reopens once things cool down.
 
+### VS2.5 — Ally Cat Security (scoped 2026-09-04, not built)
+Real, founder-direct addition (kanban `ALLYCAT-000`): "ok i think we fix the branding and we
+have it be an in universe trapx security contractor where you can buy some of the anti k9 tech
+etc and also you can like have missions with them and shit." Real in-universe prospectus already
+written: `TYLER/lore/ally_cat_security_prospectus.md`. Genuinely depends on VS2's own K9 Doctrine
+landing first (anti-K9 tech needs a real K9 unit to counter) — placed right after it, not folded
+into it, since "missions" below is real, new milestone-shaped scope this doc's own VS0-VS4 plan
+never named anywhere.
+
+- **Anti-K9 tech (real counter-items to VS2's own K9 units)**: a real, sellable item (or set of
+  items) a player can buy from an Ally Cat vendor that measurably degrades a K9 unit's own
+  escort/guard behavior against them specifically — the real, direct mechanical hook the
+  prospectus's own "K9 counter-doctrine equipment" line promises. Real, concrete design not
+  decided here: does it suppress the Wolf's own targeting `Goal` for a duration (a real, timed
+  debuff item), reduce detection range, or something else — a real, separate design pass once
+  VS2's own K9 implementation exists to design against, not guessed at in advance of it.
+- **Missions (a genuinely new system, not currently scoped anywhere in this doc)**: Ally Cat
+  issues real, concrete contracts/bounties a player can accept and complete for a reward (Flow,
+  reputation, or unique items — not decided). Real, deliberate moral-gray-area kept, not
+  smoothed over, per the prospectus's own working notes: Ally Cat is a licensed TRAPX
+  contractor that ALSO sells anti-K9 tech to whoever can pay, meaning its own missions could
+  plausibly cut either direction (working with Field Office holders, or against them) — a real,
+  honest design opportunity for whoever scopes the actual mission content, not resolved here.
+- **Vendor/NPC presence**: a real, named Ally Cat vendor entity (custom-named Villager or a
+  bespoke mob, matching VS2's own Party Store precedent for "a real Minecraft entity playing a
+  named commercial role") is the real, concrete anchor point both anti-K9 tech sales and mission
+  pickup would hang off of. Not built.
+- *Acceptance (not yet met — this phase isn't built)*: a player can buy a real anti-K9 item from
+  a real Ally Cat vendor and measurably out-run/out-hide-from a K9 unit that would otherwise have
+  caught them; a player can accept and complete at least one real Ally Cat mission for a real
+  reward.
+
 ### VS3 — Media + Factions
 - `TextDisplay`-based in-world broadcast screens ("TVs") showing recent receipts/claims —
   the CRT-broadcast framing from TRAPX's meta-frame, minus any client-side shader work (none

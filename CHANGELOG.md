@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 2026-09-04
+- docs/NORTHSTAR.md: new VS2.5 -- Ally Cat Security (kanban `ALLYCAT-000`), scoped not built.
+  Real, founder-direct addition: an in-universe TRAPX-licensed security contractor selling
+  anti-K9 tech (real counter-items to VS2's own K9 Doctrine) and issuing real missions/contracts
+  (a genuinely new system, not previously scoped anywhere in this doc's VS0-VS6 plan). Real
+  in-universe prospectus already written: `TYLER/lore/ally_cat_security_prospectus.md`. Placed
+  after VS2 since anti-K9 tech genuinely depends on a real K9 unit existing first. Real,
+  deliberate design note kept, not smoothed over: Ally Cat sells to whoever can pay, including
+  players working against a Field Office holder's own K9 units -- a real moral-gray-area named
+  directly for whoever scopes the actual mission content next. No code written this pass.
+
 ## 2026-08-30
 
 - EnforcementManager: real 'humanness fingerprint' -- zombie target-acquisition now uses a PARENA-compiled (mishri+gta7 stdlib), gaussian-jittered reaction delay + bounded hesitation chance instead of instant, uniform setTarget(). Logged per-mob. Full mvn package verified. (sess-20260825-1938-f6bd411e)
