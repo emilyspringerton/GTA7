@@ -185,15 +185,17 @@ final class IdunaClient {
         }
     }
 
-    // Polls for new messages since sinceId, GFD-origin only (filtered
-    // client-side -- the real endpoint has no exclude_server param, see the
-    // spec doc's own note on this). Never throws; returns empty on failure
-    // so a transient IDUNA hiccup doesn't spam warnings every poll tick.
-    List<ChatMessage> pollGfdChat(long sinceId) {
+    // Polls for new messages since sinceId, from EVERY source (the global chat
+    // bridge, 2026-11-17: which ones Minecraft shows is ChatBridgeRules, the
+    // PARENA rulebook SHANKPIT's server uses too -- ChatBridgePoller decides).
+    // The bus lists oldest first, `limit` at a time. Never throws; returns
+    // empty on failure so a transient IDUNA hiccup doesn't spam warnings every
+    // poll tick.
+    List<ChatMessage> pollChat(long sinceId, int limit) {
         List<ChatMessage> out = new ArrayList<>();
         try {
             HttpRequest req = HttpRequest.newBuilder(
-                            URI.create(baseUrl + "/api/v1/chat/messages?since_id=" + sinceId + "&limit=50"))
+                            URI.create(baseUrl + "/api/v1/chat/messages?since_id=" + sinceId + "&limit=" + limit))
                     .header("Authorization", "Bearer " + ensureToken())
                     .GET().build();
             HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
@@ -204,16 +206,18 @@ final class IdunaClient {
             Matcher objMatcher = CHAT_OBJECT_RE.matcher(resp.body());
             while (objMatcher.find()) {
                 String obj = objMatcher.group();
-                Matcher sourceM = SENDER_SOURCE_RE.matcher(obj);
-                if (!sourceM.find() || !"gfd_server".equals(unescape(sourceM.group(1)))) continue;
-
                 Matcher idM = ID_RE.matcher(obj);
+                if (!idM.find()) continue;
+                long id = Long.parseLong(idM.group(1));
+                Matcher sourceM = SENDER_SOURCE_RE.matcher(obj);
                 Matcher nameM = SENDER_NAME_RE.matcher(obj);
                 Matcher bodyM = BODY_RE.matcher(obj);
-                if (idM.find() && nameM.find() && bodyM.find()) {
-                    out.add(new ChatMessage(Long.parseLong(idM.group(1)),
-                            unescape(nameM.group(1)), "gfd_server", unescape(bodyM.group(1))));
-                }
+                // Every id is returned, even one with a missing field (as an empty message), so the
+                // poller's cursor always moves past it.
+                String source = sourceM.find() ? unescape(sourceM.group(1)) : "";
+                String name = nameM.find() ? unescape(nameM.group(1)) : "";
+                String body = bodyM.find() ? unescape(bodyM.group(1)) : "";
+                out.add(new ChatMessage(id, name, source, body));
             }
         } catch (Exception e) {
             plugin.getLogger().warning("IDUNA chat poll failed: " + e.getMessage());
